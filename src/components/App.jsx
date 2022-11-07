@@ -19,29 +19,24 @@ export class App extends React.Component {
 
   // Передає пропс в компонент форми
   formSubmitHandler = (contact, id) => {
-    contact.id = id;
+    const normalizedName = contact.name.toLowerCase();
+    const contactItem = {
+      id,
+      name: contact.name,
+      number: contact.number,
+    };
+    const filteredContacts = this.state.contacts.filter(
+      searchContact => searchContact.name.toLowerCase() === normalizedName
+    );
 
-    this.setState({
-      contacts: [...this.state.contacts, contact],
-    });
+    if (filteredContacts.length > 0) {
+      alert(`${contact.name} is already in contacts`);
+    } else {
+      this.setState({
+        contacts: [contactItem, ...this.state.contacts],
+      });
+    }
   };
-
-  // formSubmitHandler = (contact, id) => {
-  //   contact.id = id;
-  //   this.state.contacts.map(searchContact => {
-  //     if (searchContact.name === contact.name) {
-  //       alert(`${contact.name} is already in contacts`);
-  //     } else {
-  //       console.log('cerf');
-  //       this.setState({
-  //         contacts: [...this.state.contacts, contact],
-  //       });
-  //     }
-  //   });
-  // };
-
-  searchDublicate = contact => {};
-
   onDeleteContact = id => {
     this.setState(prevState => ({
       contacts: prevState.contacts.filter(contact => contact.id !== id),
@@ -55,9 +50,12 @@ export class App extends React.Component {
   getVisibleContact = () => {
     const { contacts, filter } = this.state;
     const normalizedFilter = filter.toLowerCase();
-    return contacts.filter(contact =>
+
+    const search = contacts.filter(contact =>
       contact.name.toLowerCase().includes(normalizedFilter)
     );
+    // console.log(search);
+    return search;
   };
 
   renderContacts = contacts => {
